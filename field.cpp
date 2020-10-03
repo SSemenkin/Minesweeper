@@ -62,7 +62,6 @@ void Field::generateBombs()
 
 void Field::handleMouseClick()
 {
-
     int row  = 0, column = 0;
      for(int i = 0; i < size; ++i) {
          for(int j = 0; j< size; ++j) {
@@ -73,14 +72,9 @@ void Field::handleMouseClick()
          }
      }
 
-
-
     if(!m_container[row][column].isBomb()) {
         int value = calcNearBomb(row, column);
         m_container[row][column].setNearBomb(value);
-
-        if(value == 0)
-            recursiveWalk(row,column);
 
     } else {
 
@@ -89,8 +83,6 @@ void Field::handleMouseClick()
 
 int Field::calcNearBomb(int row, int column)
 {
-   if(row <= size - 1 && row >= 0 && column >=0 && column <= size - 1)
-       return 0;
    int nearBomb = 0;
    nearBomb += isValid(row+1, column);
    nearBomb += isValid(row+1, column+1);
@@ -108,22 +100,5 @@ bool Field::isValid(int row, int column)
     if(row <= size - 1 && row >= 0 && column <= size - 1 && column >=0)
         return m_container[row][column].isBomb();
     else return false;
-}
-
-void Field::recursiveWalk(int row, int column)
-{
-      if(moves.contains(QPair<int,int>(row,column)))
-          return ;
-      moves << QPair<int,int>(row, column);
-      int result = calcNearBomb(row,column);
-      if( result != 0) { // base case
-          return;
-      } else m_container[row][column].setNearBomb(result);
-
-
-      recursiveWalk(row+1, column);
-      recursiveWalk(row-1, column);
-      recursiveWalk(row, column+1);
-      recursiveWalk(row, column-1);
 }
 

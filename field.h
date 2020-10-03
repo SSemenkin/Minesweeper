@@ -27,7 +27,6 @@ private Q_SLOTS:
     void handleMouseClick ();
     int calcNearBomb (int row, int column);
     bool isValid(int row, int column);
-    void recursiveWalk(int row, int column);
 private:
     Ui::Field *ui;
 
@@ -35,7 +34,6 @@ private:
     int bombCounter = 25;
     Cell ** m_container;
 
-    QVector<QPair<int,int>> moves;
 
 };
 #endif // Field_H

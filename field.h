@@ -26,13 +26,16 @@ private Q_SLOTS:
     void generateBombs    ();
     void handleMouseClick ();
     int calcNearBomb (int row, int column);
-
+    bool isValid(int row, int column);
+    void recursiveWalk(int row, int column);
 private:
     Ui::Field *ui;
 
     int size = 10;
-    int bombCounter = 10;
+    int bombCounter = 25;
     Cell ** m_container;
+
+    QVector<QPair<int,int>> moves;
 
 };
 #endif // Field_H

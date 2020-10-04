@@ -127,6 +127,10 @@ void Field::recursiveWalk(int row, int column)
     recursiveWalk (row - 1, column);
     recursiveWalk (row, column + 1);
     recursiveWalk (row, column - 1);
+    recursiveWalk (row + 1, column + 1);
+    recursiveWalk (row + 1, column - 1);
+    recursiveWalk (row - 1, column + 1);
+    recursiveWalk (row - 1, column - 1);
 }
 
 void Field::restartGame()

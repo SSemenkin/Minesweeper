@@ -41,6 +41,36 @@ void Cell::paintEvent(QPaintEvent *)
         }
 
         if (nearBomb > 0 && !m_hidden) {
+            switch (nearBomb) {
+            case 1:
+                p.setPen (Qt::blue);
+                break;
+            case 2:
+                 p.setPen (Qt::green);
+                break;
+            case 3:
+                 p.setPen (Qt::yellow);
+                break;
+            case 4:
+                p.setPen (Qt::darkYellow);
+                break;
+            case 5:
+                p.setPen (Qt::red);
+                break;
+            case 6:
+                p.setPen (Qt::darkRed);
+                break;
+            case 7:
+                p.setPen (Qt::cyan);
+                break;
+            case 8:
+                p.setPen (Qt::darkCyan);
+                break;
+            case 9:
+                p.setPen (Qt::magenta);
+                break;
+
+            }
             p.drawText(this->rect(), Qt::AlignCenter, QString::number(nearBomb));
         }
     }

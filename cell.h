@@ -14,8 +14,13 @@ public:
     explicit Cell(QWidget *parent = nullptr);
     void setBomb (bool state) { bomb = state; }
     bool isBomb () const { return bomb;}
-    void setNearBomb (int nBomb) { nearBomb = nBomb; if(nearBomb) update();}
+    void setNearBomb (int nBomb) {
+        m_hidden = false;
+        nearBomb = nBomb;
+        update();
+    }
     void setHidden (bool hidden) { m_hidden = hidden; update();}
+    bool isHidden() const { return m_hidden; }
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;

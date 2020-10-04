@@ -1,5 +1,5 @@
-#include "Field.h"
-#include "ui_Field.h"
+#include "field.h"
+#include "ui_field.h"
 
 Field::Field(QWidget *parent)
     : QMainWindow(parent)
@@ -72,33 +72,104 @@ void Field::handleMouseClick()
          }
      }
 
+     qDebug() << row << column;
     if(!m_container[row][column].isBomb()) {
         int value = calcNearBomb(row, column);
         m_container[row][column].setNearBomb(value);
 
-    } else {
+        if(value == 0) recursiveWalk (row, column);
+        moves.clear ();
 
+        if(isWin ()) {
+            questionForRestart ("Victory", "You Win!\nDo you want to start new game?");
+        }
+    } else {
+            questionForRestart ("Defeat", "You Lose!\nDo you want to start new game?");
     }
 }
 
 int Field::calcNearBomb(int row, int column)
 {
    int nearBomb = 0;
-   nearBomb += isValid(row+1, column);
-   nearBomb += isValid(row+1, column+1);
-   nearBomb += isValid(row+1, column-1);
-   nearBomb += isValid(row, column +1);
-   nearBomb += isValid(row, column -1);
-   nearBomb += isValid(row-1, column+1);
-   nearBomb += isValid(row-1, column);
-   nearBomb += isValid(row-1, column-1);
+   nearBomb += valueAtIndex(row+1, column);
+   nearBomb += valueAtIndex(row+1, column+1);
+   nearBomb += valueAtIndex(row+1, column-1);
+   nearBomb += valueAtIndex(row, column +1);
+   nearBomb += valueAtIndex(row, column -1);
+   nearBomb += valueAtIndex(row-1, column+1);
+   nearBomb += valueAtIndex(row-1, column);
+   nearBomb += valueAtIndex(row-1, column-1);
    return nearBomb;
 }
 
-bool Field::isValid(int row, int column)
+bool Field::valueAtIndex(int row, int column)
 {
-    if(row <= size - 1 && row >= 0 && column <= size - 1 && column >=0)
-        return m_container[row][column].isBomb();
-    else return false;
+    return (row <= size - 1 && row >= 0 && column <= size - 1 && column >=0)  ?
+         m_container[row][column].isBomb() :  false;
+}
+
+void Field::recursiveWalk(int row, int column)
+{
+    if(row > size - 1 || row < 0 || column < 0 || column > size - 1 || moves.contains (QPair<int, int> (row, column)))
+        return;
+
+
+    moves << QPair<int, int> (row, column);
+    int result = calcNearBomb (row,column);
+    if(m_container[row][column].isBomb ()) {
+        return;
+    } else if (!m_container[row][column].isBomb () && result !=0){
+        m_container[row][column].setNearBomb (result);
+        return;
+    } else m_container[row][column].setNearBomb (result);
+
+    recursiveWalk (row + 1, column);
+    recursiveWalk (row - 1, column);
+    recursiveWalk (row, column + 1);
+    recursiveWalk (row, column - 1);
+}
+
+void Field::restartGame()
+{
+    moves.clear ();
+
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            ui->gridLayout->removeWidget (&m_container[i][j]);
+        }
+    }
+
+    for (int i = 0; i < size; i ++)
+        delete [] m_container[i];
+
+    delete [] m_container;
+
+    initiateGame ();
+}
+
+bool Field::isWin()
+{
+    int cellsThatNeedToShow = size * size - bombCounter;
+    int counterShows = 0;
+    for (int i = 0; i < size; i ++) {
+        for (int j = 0; j < size; j++) {
+            if(!m_container[i][j].isHidden ()) counterShows ++;
+        }
+    }
+    return counterShows - cellsThatNeedToShow == 0 ? true : false;
+}
+
+void Field::questionForRestart(const QString title, const QString text)
+{
+    int result = QMessageBox::question (this, title, text);
+
+    switch (result) {
+    case QMessageBox::StandardButton::Yes:
+        restartGame ();
+        break;
+    case QMessageBox::StandardButton::No:
+        QCoreApplication::quit ();
+        break;
+    }
 }
 
